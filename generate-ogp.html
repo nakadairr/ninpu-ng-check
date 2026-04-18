@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="UTF-8"><title>OGP生成｜妊婦のNG行動チェックリスト</title></head>
+<body style="background:#fff8f5;display:flex;align-items:center;justify-content:center;flex-direction:column;min-height:100vh;margin:0">
+<canvas id="c" width="1200" height="630"></canvas>
+<script>
+const canvas = document.getElementById('c');
+const ctx = canvas.getContext('2d');
+const W = 1200, H = 630;
+
+function roundRect(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x+r,y); ctx.lineTo(x+w-r,y);
+  ctx.quadraticCurveTo(x+w,y,x+w,y+r);
+  ctx.lineTo(x+w,y+h-r);
+  ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+  ctx.lineTo(x+r,y+h);
+  ctx.quadraticCurveTo(x,y+h,x,y+h-r);
+  ctx.lineTo(x,y+r);
+  ctx.quadraticCurveTo(x,y,x+r,y);
+  ctx.closePath();
+}
+
+// 背景
+const bg = ctx.createLinearGradient(0, 0, W, H);
+bg.addColorStop(0, '#fff5f3');
+bg.addColorStop(0.5, '#fff8f5');
+bg.addColorStop(1, '#fdf5ff');
+ctx.fillStyle = bg;
+ctx.fillRect(0, 0, W, H);
+
+// グロー（右上・赤）
+const g1 = ctx.createRadialGradient(W*0.85, H*0.15, 0, W*0.85, H*0.15, 300);
+g1.addColorStop(0, 'rgba(224,85,85,0.18)');
+g1.addColorStop(1, 'transparent');
+ctx.fillStyle = g1; ctx.fillRect(0, 0, W, H);
+
+// グロー（左下・紫）
+const g2 = ctx.createRadialGradient(W*0.15, H*0.85, 0, W*0.15, H*0.85, 240);
+g2.addColorStop(0, 'rgba(155,126,200,0.15)');
+g2.addColorStop(1, 'transparent');
+ctx.fillStyle = g2; ctx.fillRect(0, 0, W, H);
+
+// 装飾丸
+[[80,80,18],[180,50,12],[1100,80,20],[1050,160,12],[60,540,14],[140,590,18],[1120,520,16],[1080,590,12]].forEach(([x,y,r])=>{
+  ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI*2);
+  ctx.fillStyle = 'rgba(224,85,85,0.12)'; ctx.fill();
+});
+
+// 枠線
+ctx.strokeStyle = 'rgba(224,85,85,0.28)';
+ctx.lineWidth = 2;
+roundRect(ctx, 36, 36, W-72, H-72, 24); ctx.stroke();
+
+// 角飾り
+[[36,36,1,1],[W-36,36,-1,1],[36,H-36,1,-1],[W-36,H-36,-1,-1]].forEach(([x,y,dx,dy])=>{
+  ctx.beginPath();
+  ctx.moveTo(x+dx*28, y); ctx.lineTo(x, y); ctx.lineTo(x, y+dy*28);
+  ctx.strokeStyle = 'rgba(155,126,200,0.45)'; ctx.lineWidth = 2.5; ctx.stroke();
+});
+
+// メインアイコン
+ctx.font = '96px serif'; ctx.textAlign = 'center';
+ctx.fillText('🚫', W/2, 195);
+
+// タイトル（2行）
+const tg = ctx.createLinearGradient(W/2-380, 0, W/2+380, 0);
+tg.addColorStop(0, '#a03030'); tg.addColorStop(0.4, '#e05555');
+tg.addColorStop(0.65, '#9b7ec8'); tg.addColorStop(1, '#a03030');
+ctx.fillStyle = tg;
+ctx.font = 'bold 58px "Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif';
+ctx.shadowColor = 'rgba(224,85,85,0.25)'; ctx.shadowBlur = 16;
+ctx.fillText('妊婦のNG行動チェックリスト', W/2, 308);
+ctx.shadowBlur = 0;
+
+// サブタイトル
+ctx.fillStyle = 'rgba(58,42,62,0.5)';
+ctx.font = '24px "Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif';
+ctx.fillText('妊娠中にやってはいけないこと 50項目以上｜3段階リスク', W/2, 365);
+
+// 区切り
+ctx.beginPath();
+ctx.moveTo(W/2-120,392); ctx.lineTo(W/2-20,392);
+ctx.moveTo(W/2+20,392); ctx.lineTo(W/2+120,392);
+ctx.strokeStyle='rgba(224,85,85,0.35)'; ctx.lineWidth=1; ctx.stroke();
+ctx.font='13px serif'; ctx.fillStyle='rgba(224,85,85,0.7)';
+ctx.fillText('✦', W/2, 397);
+
+// URL
+ctx.fillStyle = 'rgba(155,126,200,0.6)';
+ctx.font = '21px "Hiragino Kaku Gothic ProN",sans-serif';
+ctx.fillText('ninpu-ng-check.vercel.app', W/2, 442);
+
+// バッジ3つ
+const tags = [['絶対NG','#e05555','#fdeaea'],['要注意','#e8963a','#fff4e5'],['控えめに','#c8a05a','#fdf5e0']];
+const bw = 160, bg2 = 20, btotal = tags.length*bw + (tags.length-1)*bg2;
+const bsx = (W-btotal)/2;
+tags.forEach(([label, color, bg], i) => {
+  const bx = bsx + i*(bw+bg2);
+  ctx.fillStyle = bg;
+  roundRect(ctx, bx, 468, bw, 44, 22); ctx.fill();
+  ctx.strokeStyle = color; ctx.lineWidth = 1.5;
+  roundRect(ctx, bx, 468, bw, 44, 22); ctx.stroke();
+  ctx.fillStyle = color;
+  ctx.font = 'bold 18px "Hiragino Kaku Gothic ProN",sans-serif';
+  ctx.fillText(label, bx+bw/2, 495);
+});
+
+// 無料バッジ
+ctx.fillStyle = 'rgba(224,85,85,0.85)';
+roundRect(ctx, W/2-30, 530, 60, 24, 12); ctx.fill();
+ctx.fillStyle = '#fff'; ctx.font = 'bold 12px sans-serif';
+ctx.fillText('無 料', W/2, 547);
+
+setTimeout(() => {
+  const a = document.createElement('a');
+  a.download = 'ogp.png';
+  a.href = canvas.toDataURL('image/png');
+  a.click();
+  document.body.innerHTML += '<p style="color:#e05555;text-align:center;font-family:sans-serif;margin-top:20px">✅ ogp.png をダウンロードしました！</p>';
+}, 500);
+</script>
+</body>
+</html>
